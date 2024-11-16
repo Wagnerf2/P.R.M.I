@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Software de Cálculos - Motorredutor</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #461872;
+        color: #fff;
+        padding: 20px;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+    }
+    th, td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: center;
+    }
+    th {
+        background-color: #4a148c;
+        color: #fff;
+    }
+    input, select {
+        width: 90%;
+        padding: 5px;
+    }
+    button {
+        background-color: #4a148c;
+        color: white;
+        padding: 10px;
+        border: none;
+        margin-top: 10px;
+        cursor: pointer;
+    }
+    button:hover {
+        background-color: #380d6f;
+    }
+    .resumo-tecnico {
+        background-color: #4a148c;
+        padding: 20px;
+        border-radius: 10px;
+        margin-top: 20px;
+    }
+    .container {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <h1>Software de Cálculos - Motorredutor</h1>
+    <h2>Dados de Entrada</h2>
+    <table>
+        <tr>
+            <th>Parâmetro</th>
+            <th>Valor</th>
+            <th>Unidade</th>
+        </tr>
+        <tr>
+            <td>Massa da Carga</td>
+            <td><input type="number" id="massa" value="1000"></td>
+            <td>kg</td>
+        </tr>
+        <tr>
+            <td>Gravidade</td>
+            <td><input type="number" id="gravidade" value="9.81" step="0.01"></td>
+            <td>m/s²</td>
+        </tr>
+        <tr>
+            <td>Número de Polias</td>
+            <td><input type="number" id="polias" value="1"></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Diâmetro do Tambor</td>
+            <td><input type="number" id="diametro" value="0.32" step="0.01"></td>
+            <td>m</td>
+        </tr>
+        <tr>
+            <td>Velocidade de Elevação</td>
+            <td><input type="number" id="velocidade" value="0.2" step="0.01"></td>
+            <td>m/s</td>
+        </tr>
+        <tr>
+            <td>Eficiência do Sistema</td>
+            <td><input type="number" id="eficiencia" value="85" step="0.01"></td>
+            <td>%</td>
+        </tr>
+        <tr>
+            <td>Eficiência do Redutor</td>
+            <td><input type="number" id="eficiencia_redutor" value="95" step="0.01"></td>
+            <td>%</td>
+        </tr>
+        <tr>
+            <td>Velocidade do Motor</td>
+            <td><input type="number" id="velocidade_motor" value="1800"></td>
+            <td>rpm</td>
+        </tr>
+        <tr>
+            <td>Tipo de Aplicação</td>
+            <td>
+                <select id="tipo_aplicacao">
+                    <option value="1.25">Carga Leve (FS = 1.25)</option>
+                    <option value="1.5">Carga Média (FS = 1.5)</option>
+                    <option value="2.0">Carga Pesada (FS = 2.0)</option>
+                </select>
+            </td>
+            <td></td>
+        </tr>
+    </table>
+    <button onclick="calcular()">Calcular</button>
+    <h2>Resultados</h2>
+    <table id="resultados">
+        <thead>
+            <tr>
+                <th>Parâmetro</th>
+                <th>Valor</th>
+                <th>Unidade</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Força Peso</td>
+                <td id="forca_peso">-</td>
+                <td>N</td>
+            </tr>
+            <tr>
+                <td>Força no Cabo</td>
+                <td id="forca_cabo">-</td>
+                <td>N</td>
+            </tr>
+            <tr>
+                <td>Torque Nominal</td>
+                <td id="torque_nominal">-</td>
+                <td>Nm</td>
+            </tr>
+            <tr>
+                <td>Potência Mecânica</td>
+                <td id="potencia_mecanica">-</td>
+                <td>kW</td>
+            </tr>
+            <tr>
+                <td>Potência do Motor</td>
+                <td id="potencia_motor">-</td>
+                <td>kW</td>
+            </tr>
+            <tr>
+                <td>Rotação do Tambor</td>
+                <td id="rotacao_tambor">-</td>
+                <td>rpm</td>
+            </tr>
+            <tr>
+                <td>Relação de Redução</td>
+                <td id="relacao_reducao">-</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Motor Selecionado</td>
+                <td id="motor_selecionado">-</td>
+                <td>kW</td>
+            </tr>
+            <tr>
+                <td>Fator de Serviço</td>
+                <td id="fator_servico">-</td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="resumo-tecnico">
+        <h2>Resumo Técnico</h2>
+        <p><strong>Torque Nominal:</strong> <span id="resumo_torque">-</span> Nm</p>
+        <p><strong>Potência do Motor:</strong> <span id="resumo_potencia_motor">-</span> kW</p>
+        <p><strong>Motor Selecionado:</strong> <span id="resumo_motor">-</span></p>
+        <p><strong>Fator de Serviço:</strong> <span id="resumo_fator_servico">-</span></p>
+        <p><strong>Rotação do Tambor:</strong> <span id="resumo_rotacao">-</span> rpm</p>
+        <p><strong>Relação de Redução:</strong> <span id="resumo_relacao">-</span></p>
+    </div>
+</div>
+<script>
+function calcular() {
+    const massa = parseFloat(document.getElementById("massa").value);
+    const gravidade = parseFloat(document.getElementById("gravidade").value);
+    const polias = parseInt(document.getElementById("polias").value);
+    const diametro = parseFloat(document.getElementById("diametro").value);
+    const velocidade = parseFloat(document.getElementById("velocidade").value);
+    const eficiencia = parseFloat(document.getElementById("eficiencia").value) / 100;
+    const eficiencia_redutor = parseFloat(document.getElementById("eficiencia_redutor").value) / 100;
+    const velocidade_motor = parseFloat(document.getElementById("velocidade_motor").value);
+    const fatorServico = parseFloat(document.getElementById("tipo_aplicacao").value);
+
+    const forcaPeso = massa * gravidade;
+    const forcaCabo = forcaPeso / polias;
+    const torqueNominal = forcaCabo * (diametro / 2);
+    const potenciaMecanica = (forcaPeso * velocidade) / (1000 * polias);
+    const potenciaMotor = (potenciaMecanica / (eficiencia * eficiencia_redutor)) * fatorServico;
+    const rotacaoTambor = (velocidade / (Math.PI * diametro)) * 60;
+    const relacaoReducao = "1:" + Math.ceil(velocidade_motor / rotacaoTambor);
+
+    const motoresPadrao = [0.75, 1.5, 2.2, 3, 4, 5.5, 7.5, 11, 15, 18.5, 22, 30, 37, 45, 55, 75, 90];
+    const motorSelecionado = motoresPadrao.find(motor => motor >= potenciaMotor) || motoresPadrao[motoresPadrao.length - 1];
+
+    document.getElementById("forca_peso").innerText = forcaPeso.toFixed(2);
+    document.getElementById("forca_cabo").innerText = forcaCabo.toFixed(2);
+    document.getElementById("torque_nominal").innerText = torqueNominal.toFixed(2);
+    document.getElementById("potencia_mecanica").innerText = potenciaMecanica.toFixed(2);
+    document.getElementById("potencia_motor").innerText = potenciaMotor.toFixed(2);
+    document.getElementById("rotacao_tambor").innerText = rotacaoTambor.toFixed(2);
+    document.getElementById("relacao_reducao").innerText = relacaoReducao;
+    document.getElementById("motor_selecionado").innerText = `${motorSelecionado.toFixed(2)} kW`;
+    document.getElementById("fator_servico").innerText = fatorServico;
+
+    document.getElementById("resumo_torque").innerText = torqueNominal.toFixed(2);
+    document.getElementById("resumo_potencia_motor").innerText = potenciaMotor.toFixed(2);
+    document.getElementById("resumo_motor").innerText = `${motorSelecionado.toFixed(2)} kW`;
+    document.getElementById("resumo_fator_servico").innerText = fatorServico;
+    document.getElementById("resumo_rotacao").innerText = rotacaoTambor.toFixed(2);
+    document.getElementById("resumo_relacao").innerText = relacaoReducao;
+}
+</script>
+</body>
+</html>
